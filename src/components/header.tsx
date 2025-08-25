@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { Logo } from "./ui/icons/logo";
 import { Cart } from "./ui/icons/cart";
+import { useSelector } from "react-redux";
+import type { RootState } from "../stores";
 
 export const Header = () => {
+  const carts = useSelector((store: RootState) => store.cart.items);
+  const productQuantity = carts.reduce((acc, curr) => acc + curr.quantity, 0);
+
   return (
     <header className="flex justify-between">
       <Link to="/" className="flex items-center gap-[8px] font-bold text-[38px] text-[#274C5B]">
@@ -13,7 +18,7 @@ export const Header = () => {
         <div className="w-[56px] h-[56px] flex items-center justify-center bg-[#274C5B] rounded-[100px]">
           <Cart />
         </div>
-        <div className="font-semibold text-[18px] text-[#274C5B]">Cart (0)</div>
+        <div className="font-semibold text-[18px] text-[#274C5B]">Cart ({productQuantity})</div>
       </div>
     </header>
   );

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../stores/cart";
+import type { RootState } from "../stores";
 
 export const ProductCart = (props: any) => {
-  const carts = useSelector((store) => store.cart.items);
-  console.log(carts);
+  const carts = useSelector((store: RootState) => store.cart.items);
   const { id, name, image, price, slug } = props.data;
   const dispatch = useDispatch();
   const handleAddToCart = () => {
