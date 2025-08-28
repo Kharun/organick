@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ProductT {
   productId: number;
@@ -6,16 +6,19 @@ interface ProductT {
 }
 interface ProductState {
   items: ProductT[];
+  statusTab: boolean;
 }
 
 const initialState: ProductState = {
-  items: [],
+  items: JSON.parse(localStorage.getItem("carts") ?? "[]"),
+  statusTab: false,
 };
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart(state, action) {
+    addToCart(state, action: PayloadAction<ProductT>) {
       const { productId, quantity } = action.payload;
       const indexProductId = state.items.findIndex((item) => item.productId === productId);
       if (indexProductId >= 0) {
@@ -23,9 +26,27 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ productId, quantity });
       }
+      localStorage.setItem("carts", JSON.stringify(state.items));
+    },
+    changeQuantity(state, action: PayloadAction<ProductT>) {
+      const { productId, quantity } = action.payload;
+      const indexProductId = state.items.findIndex((item) => item.productId === productId);
+      if (quantity > 0) {
+        state.items[indexProductId].quantity = quantity;
+      } else {
+        state.items = state.items.filter((item) => item.productId !== productId);
+      }
+      localStorage.setItem("carts", JSON.stringify(state.items));
+    },
+    toggleStatusTab(state) {
+      if (state.statusTab === false) {
+        state.statusTab = true;
+      } else {
+        state.statusTab = false;
+      }
     },
   },
 });
 
-export const { addToCart } = cartSlice.actions;
+export const { addToCart, changeQuantity, toggleStatusTab } = cartSlice.actions;
 export default cartSlice.reducer;
